@@ -45,6 +45,17 @@
         />
       </div>
     </div>
-    <div class="col-span-2"></div>
+    <div class="col-span-2">
+      <div class="text-center">
+        <!-- ... -->
+        <input
+          type="checkbox"
+          id="freeDrawing"
+          (change)="toggleFreeDrawing($event)"
+        />
+        <label for="freeDrawing">Enable Free Drawing</label>
+      </div>
+      <!-- Active drawing mode -->
+    </div>
   </div>
 </div>

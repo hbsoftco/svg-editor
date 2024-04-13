@@ -55,7 +55,7 @@ export class AppComponent {
     }
   }
 
-  setBackground(imageUrl: string) {    
+  setBackground(imageUrl: string) {
     if (this.canvas) {
       fabric.Image.fromURL(imageUrl, (img) => {
         if (
@@ -79,6 +79,13 @@ export class AppComponent {
       });
     } else {
       console.log('Canvas is not initialized');
+    }
+  }
+
+  toggleFreeDrawing(event: Event) {
+    let target = event.target as HTMLInputElement;
+    if (this.canvas) {
+      this.canvas.isDrawingMode = target.checked;
     }
   }
 }
