@@ -13,18 +13,20 @@
     </button>
   </header>
 
-  <div class="flex justify-between">
-    <div class="w-1/2 p-5 grid grid-cols-2 gap-4">
-      <!-- Add your SVG backgrounds here -->
-      <img
-        *ngFor="let bg of backgrounds"
-        [src]="bg"
-        class="w-full h-auto"
-        alt="Background Image"
-      />
+  <div class="grid grid-cols-12 md:grid-cols-12 gap-4 mb-4">
+    <div class="col-span-2 p-2">
+      <div class="grid grid-cols-12 md:grid-cols-12 gap-4 mb-4">
+        <div class="col-span-6" *ngFor="let bg of backgrounds">
+          <img
+            [src]="bg"
+            class="w-full max-w-16 h-auto rounded shadow-xl cursor-pointer border"
+            alt="Background Image"
+            (click)="setBackground(bg)"
+          />
+        </div>
+      </div>
     </div>
-
-    <div class="w-1/3 p-5">
+    <div class="col-span-8">
       <div class="text-center">
         <canvas
           id="myCanvas"
@@ -43,9 +45,6 @@
         />
       </div>
     </div>
-
-    <div class="w-1/3 p-5">
-      <!-- Add your list of actions here -->
-    </div>
+    <div class="col-span-2"></div>
   </div>
 </div>

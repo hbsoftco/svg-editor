@@ -12,6 +12,7 @@ import { fabric } from 'fabric';
 })
 export class AppComponent {
   canvas!: fabric.Canvas;
+
   backgrounds = [
     '/assets/svg/bg/11.svg',
     '/assets/svg/bg/12.svg',
@@ -51,6 +52,33 @@ export class AppComponent {
       });
     } else {
       console.log('No SVG string provided');
+    }
+  }
+
+  setBackground(imageUrl: string) {    
+    if (this.canvas) {
+      fabric.Image.fromURL(imageUrl, (img) => {
+        if (
+          img &&
+          img.width &&
+          img.height &&
+          this.canvas.width &&
+          this.canvas.height
+        ) {
+          this.canvas.setBackgroundImage(
+            img,
+            this.canvas.renderAll.bind(this.canvas),
+            {
+              scaleX: this.canvas.width / img.width,
+              scaleY: this.canvas.height / img.height,
+            }
+          );
+        } else {
+          console.log('Image or canvas dimensions are not initialized');
+        }
+      });
+    } else {
+      console.log('Canvas is not initialized');
     }
   }
 }
