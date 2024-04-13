@@ -4,13 +4,28 @@
   [style.top.px]="y"
   *ngIf="isVisible"
 >
-  <div class="p-2 hover:bg-gray-100 cursor-pointer" (click)="onItemClick('addLabel')">
+  <div
+    class="p-2 hover:bg-gray-100 cursor-pointer"
+    (click)="onItemClick('addImage')"
+  >
+    Add Image
+  </div>
+  <div
+    class="p-2 hover:bg-gray-100 cursor-pointer"
+    (click)="onItemClick('addLabel')"
+  >
     Add Label
   </div>
-  <div class="p-2 hover:bg-gray-100 cursor-pointer" (click)="onItemClick('editLabel')">
+  <div
+    class="p-2 hover:bg-gray-100 cursor-pointer"
+    (click)="onItemClick('editLabel')"
+  >
     Edit Label
   </div>
-  <div class="p-2 hover:bg-gray-100 cursor-pointer" (click)="onItemClick('deleteLabel')">
+  <div
+    class="p-2 hover:bg-gray-100 cursor-pointer"
+    (click)="onItemClick('deleteLabel')"
+  >
     Delete Label
   </div>
 </div>

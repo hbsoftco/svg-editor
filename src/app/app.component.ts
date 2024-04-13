@@ -251,6 +251,42 @@ export class AppComponent {
     }
   }
 
+  async addImage(x: number, y: number) {
+    // Create a new 'input' element of type 'file'
+    let inputElement = document.createElement('input');
+    inputElement.type = 'file';
+    inputElement.accept = 'image/*';   
+
+    // Listen for the 'change' event
+    inputElement.addEventListener('change', (event: any) => {
+      if (event.target.files && event.target.files[0]) {
+        let reader = new FileReader();
+
+        reader.onload = (event: any) => {
+          let imageUrl = event.target.result;
+
+          if (imageUrl && this.canvas) {
+            fabric.Image.fromURL(imageUrl, (image) => {
+              image.set({
+                left: x,
+                top: y,
+                padding: 4,
+                cornerStyle: 'circle',
+              });
+              this.canvas.add(image);
+            });
+          }
+        };
+
+        // Read the selected file as a data URL
+        reader.readAsDataURL(event.target.files[0]);
+      }
+    });
+
+    // Programmatically click the 'input' element to open the file selection dialog
+    inputElement.click();
+  }
+
   editLabel(label: fabric.Object) {
     this.onLabelDoubleClick(label as fabric.Text);
   }
@@ -272,6 +308,8 @@ export class AppComponent {
   onMenuItemSelected(action: string) {
     if (action === 'addLabel') {
       this.addLabel(this.mouseX, this.mouseY);
+    } else if (action === 'addImage') {
+      this.addImage(this.mouseX, this.mouseY);
     } else if (action === 'editLabel' && this.selectedLabel) {
       this.editLabel(this.selectedLabel);
     } else if (action === 'deleteLabel' && this.selectedLabel) {
@@ -291,9 +329,6 @@ export class AppComponent {
     backgroundColor: string;
     text: string;
   }) {
-    console.log(changes);
-    console.log(this.selectedLabel);
-
     if (this.selectedLabel) {
       let textLabel = this.selectedLabel as fabric.Text;
       textLabel.set({
