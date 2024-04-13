@@ -7,3 +7,18 @@
 * {
   font-family: "Roboto", sans-serif;
 }
+
+.modal {
+  animation: modal-show 0.3s;
+}
+
+@keyframes modal-show {
+  from {
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

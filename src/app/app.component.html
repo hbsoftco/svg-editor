@@ -33,7 +33,7 @@
           id="myCanvas"
           width="800"
           height="600"
-          class="border-black border"
+          class="border-gray-200 border rounded-xl border-dashed"
           (contextmenu)="showContextMenu($event)"
         >
         </canvas>
@@ -91,5 +91,15 @@
       [isVisible]="isMenuVisible"
     >
     </app-right-click-menu>
+
+    <app-label-modal
+      [color]="dialog.fill"
+      [isVisible]="isModalVisible"
+      [backgroundColor]="dialog.backgroundColor"
+      [text]="dialog.text"
+      (saveChanges)="onSaveChanges($event)"
+      (delete)="onDelete()"
+      (cancel)="onCancel()"
+    ></app-label-modal>
   </div>
 </div>

@@ -3,11 +3,18 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { fabric } from 'fabric';
 import { RightClickMenuComponent } from './components/right-click-menu/right-click-menu.component';
+import { LabelModalComponent } from './components/label-modal/label-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgFor, RightClickMenuComponent, CommonModule],
+  imports: [
+    RouterOutlet,
+    NgFor,
+    RightClickMenuComponent,
+    CommonModule,
+    LabelModalComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -21,6 +28,14 @@ export class AppComponent {
   mouseY = 0;
   isMenuVisible = false;
   selectedLabel: fabric.Object | null = null;
+
+  isModalVisible = false;
+
+  dialog = {
+    fill: '',
+    backgroundColor: '',
+    text: '',
+  };
 
   backgrounds = [
     '/assets/svg/bg/11.svg',
@@ -210,11 +225,34 @@ export class AppComponent {
     }
   }
 
-  addLabel(x: number, y: number) {
-    if (this.canvas) {
-      let text = new fabric.Text('Label', { left: x, top: y });
+  onLabelDoubleClick(label: fabric.Text) {
+    this.isModalVisible = true;
+    this.dialog.fill = label.fill as string;
+    this.dialog.text = label.text as string;
+    this.dialog.backgroundColor = label.backgroundColor as string;
+
+    this.selectedLabel = label;
+  }
+
+  async addLabel(x: number, y: number) {
+    // Prompt the user for the label text and background color
+    let labelText = prompt('Enter the label text:');
+
+    if (labelText && this.canvas) {
+      let text = new fabric.Text(labelText, {
+        left: x,
+        top: y,
+        backgroundColor: '#b6b6b6',
+        padding: 4,
+        cornerStyle: 'circle',
+      });
+      text.on('mousedblclick', () => this.onLabelDoubleClick(text));
       this.canvas.add(text);
     }
+  }
+
+  editLabel(label: fabric.Object) {
+    this.onLabelDoubleClick(label as fabric.Text);
   }
 
   onRightClick(event: MouseEvent) {
@@ -233,7 +271,9 @@ export class AppComponent {
 
   onMenuItemSelected(action: string) {
     if (action === 'addLabel') {
-      this.addLabel(this.mouseX - 230, this.mouseY - 50);
+      this.addLabel(this.mouseX, this.mouseY);
+    } else if (action === 'editLabel' && this.selectedLabel) {
+      this.editLabel(this.selectedLabel);
     } else if (action === 'deleteLabel' && this.selectedLabel) {
       this.deleteLabel(this.selectedLabel as fabric.Text);
     }
@@ -244,5 +284,39 @@ export class AppComponent {
   deleteLabel(label: fabric.Text) {
     this.canvas.remove(label);
     this.selectedLabel = null;
+  }
+
+  onSaveChanges(changes: {
+    color: string;
+    backgroundColor: string;
+    text: string;
+  }) {
+    console.log(changes);
+    console.log(this.selectedLabel);
+
+    if (this.selectedLabel) {
+      let textLabel = this.selectedLabel as fabric.Text;
+      textLabel.set({
+        text: changes.text,
+        fill: changes.color,
+        backgroundColor: changes.backgroundColor,
+      });
+
+      this.canvas.renderAll();
+
+      this.isModalVisible = false;
+    }
+  }
+
+  onDelete() {
+    if (this.selectedLabel) {
+      this.canvas.remove(this.selectedLabel);
+      this.selectedLabel = null;
+    }
+    this.isModalVisible = false;
+  }
+
+  onCancel() {
+    this.isModalVisible = false;
   }
 }
