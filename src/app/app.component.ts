@@ -20,6 +20,7 @@ export class AppComponent {
   mouseX = 0;
   mouseY = 0;
   isMenuVisible = false;
+  selectedLabel: fabric.Object | null = null;
 
   backgrounds = [
     '/assets/svg/bg/11.svg',
@@ -216,14 +217,32 @@ export class AppComponent {
     }
   }
 
-  onRightClick(event: MouseEvent) {    
+  onRightClick(event: MouseEvent) {
     this.mouseX = event.clientX;
     this.mouseY = event.clientY;
     this.isMenuVisible = true;
+
+    // Get the active object (the one you right-clicked on)
+    let activeObject = this.canvas.getActiveObject();
+
+    // If the active object is a Text (label), store it
+    if (activeObject && activeObject.type === 'text') {
+      this.selectedLabel = activeObject;
+    }
   }
 
   onMenuItemSelected(action: string) {
-    this.addLabel(this.mouseX - 230, this.mouseY - 50);
+    if (action === 'addLabel') {
+      this.addLabel(this.mouseX - 230, this.mouseY - 50);
+    } else if (action === 'deleteLabel' && this.selectedLabel) {
+      this.deleteLabel(this.selectedLabel as fabric.Text);
+    }
+
     this.isMenuVisible = false;
+  }
+
+  deleteLabel(label: fabric.Text) {
+    this.canvas.remove(label);
+    this.selectedLabel = null;
   }
 }
