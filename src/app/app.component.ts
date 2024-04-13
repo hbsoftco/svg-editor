@@ -1,12 +1,13 @@
-import { NgFor } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, NgFor } from '@angular/common';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { fabric } from 'fabric';
+import { RightClickMenuComponent } from './components/right-click-menu/right-click-menu.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgFor],
+  imports: [RouterOutlet, NgFor, RightClickMenuComponent, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -15,14 +16,34 @@ export class AppComponent {
 
   backgrounds = [
     '/assets/svg/bg/11.svg',
-    '/assets/svg/bg/12.svg',
+    // '/assets/svg/bg/12.svg',
     '/assets/svg/bg/13.svg',
     '/assets/svg/bg/14.svg',
     '/assets/svg/bg/15.svg',
   ];
 
+  ngAfterViewInit() {}
+
+  fireRightClick(options: any) {
+    console.log('Right click event fired!', options);
+    // Add your custom right click handling logic here
+  }
+
+  showContextMenu(event: any) {
+    console.log('hosssssseinam :(', event);
+  }
+
   ngOnInit() {
     this.canvas = new fabric.Canvas('myCanvas');
+
+    this.canvas.stopContextMenu = true;
+    this.canvas.on('mouse:down:before', (e: fabric.IEvent<MouseEvent>) => {
+      this.showContextMenu(e);
+      this.onRightClick(e.e);
+
+      // this.fireRightClick(e.e.preventDefault);
+    });
+
   }
 
   handleFileInput(event: Event) {
@@ -107,5 +128,46 @@ export class AppComponent {
     if (this.canvas) {
       this.canvas.clear();
     }
+  }
+
+  // showContextMenu(event: MouseEvent) {
+  //   console.log('hossein');
+
+  //   event.preventDefault();
+  //   let contextMenu = document.getElementById('contextMenu');
+  //   if (contextMenu) {
+  //     contextMenu.style.top = `${event.clientY}px`;
+  //     contextMenu.style.left = `${event.clientX}px`;
+  //     contextMenu.classList.remove('hidden');
+  //   }
+  // }
+
+  addLabel() {
+    alert('clicked');
+    if (this.canvas) {
+      let text = new fabric.Text('Label', { left: 10, top: 10 });
+      this.canvas.add(text);
+    }
+    let contextMenu = document.getElementById('contextMenu');
+    if (contextMenu) {
+      contextMenu.classList.add('hidden');
+    }
+  }
+
+  mouseX = 0;
+  mouseY = 0;
+  isMenuVisible = false;
+
+  onRightClick(event: MouseEvent) {
+    console.log(event);
+
+    this.mouseX = event.clientX;
+    this.mouseY = event.clientY;
+    this.isMenuVisible = true;
+  }
+
+  onMenuItemSelected(action: string) {
+    console.log('Menu item selected:', action);
+    this.isMenuVisible = false; // Hide the menu after selection
   }
 }

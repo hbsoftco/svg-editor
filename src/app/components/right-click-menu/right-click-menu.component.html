@@ -1,0 +1,13 @@
+<div
+  class="absolute bg-white shadow-md border rounded-md border-gray-200 p-2"
+  [style.left.px]="x"
+  [style.top.px]="y"
+  *ngIf="isVisible"
+>
+  <div class="p-2 hover:bg-gray-100 cursor-pointer" (click)="onItemClick('Action 1')">
+    Add Label
+  </div>
+  <div class="p-2 hover:bg-gray-100 cursor-pointer" (click)="onItemClick('Action 2')">
+    Delete Label
+  </div>
+</div>

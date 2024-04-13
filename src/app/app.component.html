@@ -1,6 +1,6 @@
 <div class="container mx-auto">
   <header
-    class="flex justify-start items-center gap-2 bg-gray-100 p-2 px-4 border-b border-gray-300"
+    class="flex justify-start items-center gap-2 bg-gray-100 p-2 px-4 border-b border-gray-300 mb-4"
   >
     <button>
       <img src="/assets/svg/document-cloud.svg" alt="Save" />
@@ -34,6 +34,7 @@
           width="800"
           height="600"
           class="border-black border"
+          (contextmenu)="showContextMenu($event)"
         >
         </canvas>
         <label for="svgFile">Upload SVG File:</label>
@@ -82,5 +83,21 @@
       <button (click)="clearCanvas()">Clear Canvas</button>
       <!-- Add clear canvas -->
     </div>
+
+    <!-- <div
+      id="contextMenu"
+      class="hidden bg-white border rounded shadow-md p-2"
+      style="position: absolute"
+    > -->
+    <!-- <button (click)="addLabel()">Add Label</button> -->
+    <!-- </div> -->
+
+    <app-right-click-menu
+      [x]="mouseX"
+      [y]="mouseY"
+      (menuItemSelected)="onMenuItemSelected($event)"
+      [isVisible]="isMenuVisible"
+    >
+    </app-right-click-menu>
   </div>
 </div>
