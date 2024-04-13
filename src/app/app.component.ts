@@ -1,3 +1,4 @@
+import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { fabric } from 'fabric';
@@ -5,13 +6,19 @@ import { fabric } from 'fabric';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NgFor],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'my-app';
   canvas!: fabric.Canvas;
+  backgrounds = [
+    '/assets/svg/bg/11.svg',
+    '/assets/svg/bg/12.svg',
+    '/assets/svg/bg/13.svg',
+    '/assets/svg/bg/14.svg',
+    '/assets/svg/bg/15.svg',
+  ];
 
   ngOnInit() {
     this.canvas = new fabric.Canvas('myCanvas');
