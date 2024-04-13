@@ -26,6 +26,7 @@
         </div>
       </div>
     </div>
+
     <div class="col-span-8">
       <div class="text-center">
         <canvas
@@ -45,6 +46,7 @@
         />
       </div>
     </div>
+
     <div class="col-span-2">
       <div class="text-center">
         <!-- ... -->
@@ -56,6 +58,26 @@
         <label for="freeDrawing">Enable Free Drawing</label>
       </div>
       <!-- Active drawing mode -->
+
+      <input
+        type="color"
+        id="drawingColor"
+        value="#000000"
+        (change)="changeDrawingColor($event)"
+      />
+      <label for="drawingColor">Drawing Color</label>
+      <!-- Add drawing Color -->
+
+      <input
+        type="range"
+        id="brushSize"
+        min="1"
+        max="100"
+        value="1"
+        (change)="changeBrushSize($event)"
+      />
+      <label for="brushSize">Brush Size</label>
+      <!-- Add brush size -->
     </div>
   </div>
 </div>

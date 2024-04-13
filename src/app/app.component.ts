@@ -88,4 +88,18 @@ export class AppComponent {
       this.canvas.isDrawingMode = target.checked;
     }
   }
+
+  changeDrawingColor(event: Event) {
+    let target = event.target as HTMLInputElement;
+    if (this.canvas) {
+      this.canvas.freeDrawingBrush.color = target.value;
+    }
+  }
+
+  changeBrushSize(event: Event) {
+    let target = event.target as HTMLInputElement;
+    if (this.canvas) {
+      this.canvas.freeDrawingBrush.width = parseInt(target.value, 10);
+    }
+  }
 }
