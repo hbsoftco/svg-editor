@@ -17,6 +17,10 @@ export class AppComponent {
   activeObject: any;
   originalPos: { left: number; top: number } | null = null;
 
+  mouseX = 0;
+  mouseY = 0;
+  isMenuVisible = false;
+
   backgrounds = [
     '/assets/svg/bg/11.svg',
     // '/assets/svg/bg/12.svg',
@@ -205,30 +209,21 @@ export class AppComponent {
     }
   }
 
-  addLabel() {
-    alert('clicked');
+  addLabel(x: number, y: number) {
     if (this.canvas) {
-      let text = new fabric.Text('Label', { left: 10, top: 10 });
+      let text = new fabric.Text('Label', { left: x, top: y });
       this.canvas.add(text);
-    }
-    let contextMenu = document.getElementById('contextMenu');
-    if (contextMenu) {
-      contextMenu.classList.add('hidden');
     }
   }
 
-  mouseX = 0;
-  mouseY = 0;
-  isMenuVisible = false;
-
-  onRightClick(event: MouseEvent) {
+  onRightClick(event: MouseEvent) {    
     this.mouseX = event.clientX;
     this.mouseY = event.clientY;
     this.isMenuVisible = true;
   }
 
   onMenuItemSelected(action: string) {
-    console.log('Menu item selected:', action);
-    this.isMenuVisible = false; // Hide the menu after selection
+    this.addLabel(this.mouseX - 230, this.mouseY - 50);
+    this.isMenuVisible = false;
   }
 }

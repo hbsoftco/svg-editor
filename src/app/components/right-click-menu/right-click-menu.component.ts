@@ -15,8 +15,6 @@ export class RightClickMenuComponent {
   @Input() isVisible = false;
 
   onItemClick(action: string) {
-    console.log(action);
-
     this.menuItemSelected.emit(action);
   }
 }
