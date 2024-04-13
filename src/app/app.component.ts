@@ -11,18 +11,39 @@ import { fabric } from 'fabric';
 })
 export class AppComponent {
   title = 'my-app';
+  canvas!: fabric.Canvas;
 
   ngOnInit() {
-    const canvas = new fabric.Canvas('myCanvas');
+    this.canvas = new fabric.Canvas('myCanvas');
+  }
 
-    let rectangle = new fabric.Rect({
-      left: 10,
-      top: 10,
-      fill: 'red',
-      width: 60,
-      height: 70,
-    });
+  handleFileInput(event: Event) {
+    let target = event.target as HTMLInputElement;
+    let files = target.files;
+    if (files && files.length > 0) {
+      let file = files.item(0);
+      if (file) {
+        let fileReader = new FileReader();
+        fileReader.onload = (e) => {
+          if (typeof fileReader.result === 'string') {
+            this.loadSVG(fileReader.result);
+          }
+        };
+        fileReader.readAsText(file);
+      } else {
+        console.log('No file selected');
+      }
+    }
+  }
 
-    canvas.add(rectangle);
+  loadSVG(svgString?: string) {
+    if (svgString) {
+      fabric.loadSVGFromString(svgString, (objects, options) => {
+        let obj = fabric.util.groupSVGElements(objects, options);
+        this.canvas.add(obj).renderAll();
+      });
+    } else {
+      console.log('No SVG string provided');
+    }
   }
 }

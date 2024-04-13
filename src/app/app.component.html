@@ -1,7 +1,17 @@
-<div style="text-align:center">
-  <h1>
-    Welcome to Fabric.js in Angular!
-  </h1>
-  <canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;">
+<div style="text-align: center">
+  <h1>Welcome to Fabric.js in Angular!</h1>
+  <canvas
+    id="myCanvas"
+    width="800"
+    height="600"
+    style="border: 1px solid #000000"
+  >
   </canvas>
+  <label for="svgFile">Upload SVG File:</label>
+  <input
+    type="file"
+    id="svgFile"
+    accept=".svg"
+    (change)="handleFileInput($event)"
+  />
 </div>
