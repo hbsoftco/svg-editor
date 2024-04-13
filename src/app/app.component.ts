@@ -14,6 +14,9 @@ import { RightClickMenuComponent } from './components/right-click-menu/right-cli
 export class AppComponent {
   canvas!: fabric.Canvas;
 
+  activeObject: any;
+  originalPos: { left: number; top: number } | null = null;
+
   backgrounds = [
     '/assets/svg/bg/11.svg',
     // '/assets/svg/bg/12.svg',
@@ -25,25 +28,97 @@ export class AppComponent {
   ngAfterViewInit() {}
 
   fireRightClick(options: any) {
-    console.log('Right click event fired!', options);
+    // console.log('Right click event fired!', options);
     // Add your custom right click handling logic here
   }
 
-  showContextMenu(event: any) {
-    console.log('hosssssseinam :(', event);
-  }
+  showContextMenu(event: any) {}
 
   ngOnInit() {
     this.canvas = new fabric.Canvas('myCanvas');
 
-    this.canvas.stopContextMenu = true;
-    this.canvas.on('mouse:down:before', (e: fabric.IEvent<MouseEvent>) => {
-      this.showContextMenu(e);
-      this.onRightClick(e.e);
+    this.handleCustomMenu();
+    this.zoomCanvas();
+    this.enableDragAndDrop();
+  }
 
-      // this.fireRightClick(e.e.preventDefault);
+  enableDragAndDrop() {
+    this.canvas.on('mouse:down', (e: fabric.IEvent<MouseEvent>) => {
+      if (e.e.target) {
+        this.activeObject = e.e.target;
+        this.originalPos = {
+          left: this.activeObject.left || 0,
+          top: this.activeObject.top || 0,
+        };
+      }
     });
 
+    this.canvas.on('mouse:move', (e: fabric.IEvent<MouseEvent>) => {
+      if (this.activeObject && e.pointer) {
+        let width = this.activeObject.width ? this.activeObject.width : 0;
+        let height = this.activeObject.height ? this.activeObject.height : 0;
+        this.activeObject.left = e.pointer.x - width / 2;
+        this.activeObject.top = e.pointer.y - height / 2;
+        this.canvas.renderAll();
+      }
+    });
+
+    this.canvas.on('mouse:up', (e: fabric.IEvent<MouseEvent>) => {
+      if (this.activeObject && this.originalPos) {
+        if (
+          this.activeObject.left === this.originalPos.left &&
+          this.activeObject.top === this.originalPos.top
+        ) {
+          this.activeObject = null;
+        } else {
+          // Trigger your logic here for the drop event
+          console.log(
+            'Dropped at ',
+            this.activeObject.left,
+            this.activeObject.top
+          );
+          this.activeObject = null;
+        }
+      }
+    });
+  }
+
+  handleCustomMenu() {
+    // Deactive default right click
+    this.canvas.stopContextMenu = true;
+    this.canvas.on('mouse:down:before', (e: fabric.IEvent<MouseEvent>) => {
+      if (e.e.button === 2) {
+        this.showContextMenu(e);
+        this.onRightClick(e.e);
+      }
+    });
+  }
+
+  zoomCanvas() {
+    // Zoom in/out with mouse wheel
+    this.canvas.on('mouse:wheel', (opt) => {
+      var delta = opt.e.deltaY;
+      var zoom = this.canvas.getZoom();
+      zoom *= 0.999 ** delta;
+      if (zoom > 20) zoom = 20;
+      if (zoom < 0.01) zoom = 0.01;
+      this.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+      opt.e.preventDefault();
+      opt.e.stopPropagation();
+    });
+
+    // Change cursor on mouse over/out
+    this.canvas.on('mouse:over', (e) => {
+      if (e.target) {
+        this.canvas.defaultCursor = 'pointer';
+      }
+    });
+
+    this.canvas.on('mouse:out', (e) => {
+      if (e.target) {
+        this.canvas.defaultCursor = 'default';
+      }
+    });
   }
 
   handleFileInput(event: Event) {
@@ -130,18 +205,6 @@ export class AppComponent {
     }
   }
 
-  // showContextMenu(event: MouseEvent) {
-  //   console.log('hossein');
-
-  //   event.preventDefault();
-  //   let contextMenu = document.getElementById('contextMenu');
-  //   if (contextMenu) {
-  //     contextMenu.style.top = `${event.clientY}px`;
-  //     contextMenu.style.left = `${event.clientX}px`;
-  //     contextMenu.classList.remove('hidden');
-  //   }
-  // }
-
   addLabel() {
     alert('clicked');
     if (this.canvas) {
@@ -159,8 +222,6 @@ export class AppComponent {
   isMenuVisible = false;
 
   onRightClick(event: MouseEvent) {
-    console.log(event);
-
     this.mouseX = event.clientX;
     this.mouseY = event.clientY;
     this.isMenuVisible = true;
