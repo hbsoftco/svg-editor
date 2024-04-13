@@ -102,4 +102,10 @@ export class AppComponent {
       this.canvas.freeDrawingBrush.width = parseInt(target.value, 10);
     }
   }
+
+  clearCanvas() {
+    if (this.canvas) {
+      this.canvas.clear();
+    }
+  }
 }
