@@ -16,6 +16,8 @@ This project is an SVG Editor developed with Angular, utilizing the Fabric.js pa
 
 The project is also deployed as a serverless application on Cloudflare Workers, which you can view online via the following link:
 
+![Alt text](https://ibb.co/GTD7h0M)
+
 [svg-editor.hosseinbajan.ir](https://svg-editor.hosseinbajan.ir/)
 
 Feel free to explore and contribute to this project!
