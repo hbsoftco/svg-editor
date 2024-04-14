@@ -6,6 +6,7 @@ This project is an SVG Editor developed with Angular, utilizing the Fabric.js pa
 - Adding SVG to the canvas
 - Adding images
 - Adding labels
+- Zoom in and zoom out on all elements
 - Label deletion and editing via right-click on the canvas
 - Bulk deletion of elements
 - Drawing mode on the canvas with customizable attributes such as color and brush size
