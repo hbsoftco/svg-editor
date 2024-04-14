@@ -43,9 +43,7 @@
           (change)="handleFileInput($event)"
           class="mt-2"
         />
-        <hr />
-        <!-- <app-actions-modal [isVisible]="isActionModalVisible"></app-actions-modal> -->
-        <app-actions-modal [isVisible]="true"></app-actions-modal>
+        <app-actions-modal (close)="closeActionModal()" [isVisible]="isActionModalVisible"></app-actions-modal>
       </div>
     </div>
 

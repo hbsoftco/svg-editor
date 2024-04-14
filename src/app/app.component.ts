@@ -1,13 +1,5 @@
-import { CommonModule, NgFor, isPlatformBrowser } from '@angular/common';
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Inject,
-  NgZone,
-  PLATFORM_ID,
-  ViewChild,
-} from '@angular/core';
+import { CommonModule, NgFor } from '@angular/common';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { fabric } from 'fabric';
 import { RightClickMenuComponent } from './components/right-click-menu/right-click-menu.component';
@@ -33,60 +25,6 @@ import { ActionsModalComponent } from './components/actions-modal/actions-modal.
 })
 export class AppComponent {
   @ViewChild('canvasWrapper') canvasWrapper!: ElementRef;
-  // private root!: am5.Root;
-
-  // constructor(
-  //   @Inject(PLATFORM_ID) private platformId: Object,
-  //   private zone: NgZone
-  // ) {}
-
-  // browserOnly(f: () => void) {
-  //   if (isPlatformBrowser(this.platformId)) {
-  //     this.zone.runOutsideAngular(() => {
-  //       f();
-  //     });
-  //   }
-  // }
-
-  // hb() {
-  //   this.browserOnly(() => {
-  //     let root = am5.Root.new('chartdiv');
-  //     root.setThemes([am5themes_Animated.new(root)]);
-  //     let chart = root.container.children.push(
-  //       am5xy.XYChart.new(root, { panY: false, layout: root.verticalLayout })
-  //     );
-
-  //     let data = [
-  //       { category: 'Research', value1: 1000 },
-  //       { category: 'Marketing', value1: 1200 },
-  //       { category: 'Sales', value1: 850 },
-  //     ];
-
-  //     let yAxis = chart.yAxes.push(
-  //       am5xy.ValueAxis.new(root, {
-  //         renderer: am5xy.AxisRendererY.new(root, {}),
-  //       })
-  //     );
-  //     let xAxis = chart.xAxes.push(
-  //       am5xy.CategoryAxis.new(root, {
-  //         renderer: am5xy.AxisRendererX.new(root, {}),
-  //         categoryField: 'category',
-  //       })
-  //     );
-  //     xAxis.data.setAll(data);
-
-  //     let series1 = chart.series.push(
-  //       am5xy.ColumnSeries.new(root, {
-  //         name: 'Series',
-  //         xAxis: xAxis,
-  //         yAxis: yAxis,
-  //         valueYField: 'value1',
-  //         categoryXField: 'category',
-  //       })
-  //     );
-  //     series1.data.setAll(data);
-  //   });
-  // }
 
   canvas!: fabric.Canvas;
 
@@ -341,7 +279,19 @@ export class AppComponent {
     }
   }
 
+  closeActionModal() {
+    this.isActionModalVisible = false;
+  }
+
   onLabelDoubleClick(label: fabric.Text) {
+    this.isActionModalVisible = true;
+
+    console.log(label);
+
+    this.selectedLabel = label;
+  }
+
+  rightClickEdit(label: fabric.Text) {
     this.isModalVisible = true;
     this.dialog.fill = label.fill as string;
     this.dialog.text = label.text as string;
@@ -362,6 +312,9 @@ export class AppComponent {
         padding: 4,
         cornerStyle: 'circle',
       });
+      // Add a unique ID to the label
+      // text.set({ id: 'label-' + Date.now() });
+
       text.on('mousedblclick', () => this.onLabelDoubleClick(text));
       this.canvas.add(text);
     }
@@ -404,7 +357,7 @@ export class AppComponent {
   }
 
   editLabel(label: fabric.Object) {
-    this.onLabelDoubleClick(label as fabric.Text);
+    this.rightClickEdit(label as fabric.Text);
   }
 
   onRightClick(event: MouseEvent) {
@@ -428,16 +381,31 @@ export class AppComponent {
       this.addImage(this.mouseX, this.mouseY);
     } else if (action === 'editLabel' && this.selectedLabel) {
       this.editLabel(this.selectedLabel);
-    } else if (action === 'deleteLabel' && this.selectedLabel) {
-      this.deleteLabel(this.selectedLabel as fabric.Text);
+    } else if (action === 'deleteLabel') {
+      this.deleteLabel();
     }
 
     this.isMenuVisible = false;
   }
 
-  deleteLabel(label: fabric.Text) {
-    this.canvas.remove(label);
+  deleteLabel() {  
+    this.removeSelected();
     this.selectedLabel = null;
+  }
+
+  removeSelected() {
+    const activeObject: any = this.canvas.getActiveObject();
+    const activeGroup: any = this.canvas.getActiveObjects();
+
+    if (activeGroup) {
+      this.canvas.discardActiveObject();
+      const self = this;
+      activeGroup.forEach((object: any) => {
+        self.canvas.remove(object);
+      });
+    } else if (activeObject) {
+      this.canvas.remove(activeObject);
+    }
   }
 
   onSaveChanges(changes: {

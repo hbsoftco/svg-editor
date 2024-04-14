@@ -1,5 +1,5 @@
 import { NgClass, NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import * as am5 from '@amcharts/amcharts5';
@@ -15,6 +15,7 @@ import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 })
 export class ActionsModalComponent {
   @Input() isVisible = false;
+  @Output() close = new EventEmitter<boolean>();
 
   tab: string = 'chartConfig';
 
@@ -36,6 +37,10 @@ export class ActionsModalComponent {
     this.value = 0;
 
     console.log(this.data);
+  }
+
+  closeModal() {
+    this.close.emit(false);
   }
 
   createChart() {

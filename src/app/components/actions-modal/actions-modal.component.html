@@ -5,27 +5,37 @@
   <div
     class="bg-white rounded-lg p-4 m-4 min-w-[50rem] max-w-xl max-h-full text-center shadow-xl border border-gray-200"
   >
-    <div class="flex justify-center items-center gap-3 mb-2">
-      <button
-        (click)="tab = 'animation'"
-        [ngClass]="{
-          'bg-gray-200 text-white': tab !== 'animation',
-          'bg-blue-700 text-white': tab === 'animation'
-        }"
-        class="px-3 py-2 rounded hover:bg-blue-500 text-white"
-      >
-        Animation
-      </button>
-      <button
-        (click)="tab = 'chartConfig'"
-        [ngClass]="{
-          'bg-gray-200 text-white': tab !== 'chartConfig',
-          'bg-blue-700 text-white': tab === 'chartConfig'
-        }"
-        class="px-3 py-2 rounded hover:bg-blue-500 text-white"
-      >
-        Chart
-      </button>
+    <div class="flex justify-between items-center gap-3 mb-2">
+      <div class="flex justify-start items-center gap-3">
+        <button
+          (click)="tab = 'animation'"
+          [ngClass]="{
+            'bg-gray-200 text-white': tab !== 'animation',
+            'bg-blue-700 text-white': tab === 'animation'
+          }"
+          class="px-3 py-2 rounded hover:bg-blue-500 text-white"
+        >
+          Animation
+        </button>
+        <button
+          (click)="tab = 'chartConfig'"
+          [ngClass]="{
+            'bg-gray-200 text-white': tab !== 'chartConfig',
+            'bg-blue-700 text-white': tab === 'chartConfig'
+          }"
+          class="px-3 py-2 rounded hover:bg-blue-500 text-white"
+        >
+          Chart
+        </button>
+      </div>
+      <div>
+        <button
+          (click)="closeModal()"
+          class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-400"
+        >
+          Close Modal
+        </button>
+      </div>
     </div>
     <hr />
     <div class="text-left">
