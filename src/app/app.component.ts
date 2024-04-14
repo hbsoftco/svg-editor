@@ -1,14 +1,17 @@
 import { CommonModule, NgFor } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { fabric } from 'fabric';
 import { RightClickMenuComponent } from './components/right-click-menu/right-click-menu.component';
 import { LabelModalComponent } from './components/label-modal/label-modal.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
+    FormsModule,
+    ReactiveFormsModule,
     RouterOutlet,
     NgFor,
     RightClickMenuComponent,
@@ -19,6 +22,8 @@ import { LabelModalComponent } from './components/label-modal/label-modal.compon
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  @ViewChild('canvasWrapper') canvasWrapper!: ElementRef;
+
   canvas!: fabric.Canvas;
 
   activeObject: any;
@@ -30,6 +35,9 @@ export class AppComponent {
   selectedLabel: fabric.Object | null = null;
 
   isModalVisible = false;
+
+  canvasWidth = 800;
+  canvasHeight = 600;
 
   dialog = {
     fill: '',
@@ -45,7 +53,32 @@ export class AppComponent {
     '/assets/svg/bg/15.svg',
   ];
 
-  ngAfterViewInit() {}
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.canvasWidth = this.canvasWrapper.nativeElement.offsetWidth;
+    this.resizeCanvas();
+  }
+
+  ngAfterViewInit() {
+    this.canvasWidth = this.canvasWrapper.nativeElement.offsetWidth;
+    this.resizeCanvas();
+  }
+
+  ngOnInit() {
+    this.canvas = new fabric.Canvas('myCanvas');
+
+    this.resizeCanvas();
+    this.handleCustomMenu();
+    this.zoomCanvas();
+    this.enableDragAndDrop();
+  }
+
+  resizeCanvas() {
+    this.canvas.setWidth(this.canvasWidth);
+    this.canvas.setHeight(this.canvasHeight);
+    this.canvas.calcOffset();
+    this.canvas.renderAll();
+  }
 
   fireRightClick(options: any) {
     // console.log('Right click event fired!', options);
@@ -53,14 +86,6 @@ export class AppComponent {
   }
 
   showContextMenu(event: any) {}
-
-  ngOnInit() {
-    this.canvas = new fabric.Canvas('myCanvas');
-
-    this.handleCustomMenu();
-    this.zoomCanvas();
-    this.enableDragAndDrop();
-  }
 
   enableDragAndDrop() {
     this.canvas.on('mouse:down', (e: fabric.IEvent<MouseEvent>) => {
@@ -255,7 +280,7 @@ export class AppComponent {
     // Create a new 'input' element of type 'file'
     let inputElement = document.createElement('input');
     inputElement.type = 'file';
-    inputElement.accept = 'image/*';   
+    inputElement.accept = 'image/*';
 
     // Listen for the 'change' event
     inputElement.addEventListener('change', (event: any) => {
@@ -268,8 +293,8 @@ export class AppComponent {
           if (imageUrl && this.canvas) {
             fabric.Image.fromURL(imageUrl, (image) => {
               image.set({
-                left: x,
-                top: y,
+                left: 0,
+                top: 0,
                 padding: 4,
                 cornerStyle: 'circle',
               });
