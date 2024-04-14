@@ -2,14 +2,8 @@
   <header
     class="flex justify-start items-center gap-2 bg-gray-100 p-2 px-4 border-b border-gray-300 mb-4"
   >
-    <button>
+    <button (click)="rasterizeSVG()">
       <img src="/assets/svg/document-cloud.svg" alt="Save" />
-    </button>
-    <button>
-      <img src="/assets/svg/document-code.svg" alt="Download" />
-    </button>
-    <button>
-      <img src="/assets/svg/document-download.svg" alt="Download" />
     </button>
   </header>
 
@@ -35,15 +29,19 @@
           (contextmenu)="showContextMenu($event)"
         >
         </canvas>
-        <label for="svgFile">Upload SVG File:</label>
         <input
           type="file"
           id="svgFile"
+          #svgFile
+          hidden
           accept=".svg"
           (change)="handleFileInput($event)"
           class="mt-2"
         />
-        <app-actions-modal (close)="closeActionModal()" [isVisible]="isActionModalVisible"></app-actions-modal>
+        <app-actions-modal
+          (close)="closeActionModal()"
+          [isVisible]="isActionModalVisible"
+        ></app-actions-modal>
       </div>
     </div>
 
@@ -74,36 +72,25 @@
         class="mb-2 mt-1 outline-none p-2 shadow-md rounded-md w-full border border-gray-100"
       />
 
-      <div class="checkbox">
-        <input
-          type="checkbox"
-          id="previewMode"
-          name="previewMode"
-          (change)="togglePreviewMode()"
-          value="Preview"
-        />
-        <label for="previewMode"> Preview Mode</label>
-      </div>
-      <!-- Preview Mode -->
-
-      <div class="text-center">
-        <!-- ... -->
+      <div class="text-left mt-4 mb-2">
         <input
           type="checkbox"
           id="freeDrawing"
           (change)="toggleFreeDrawing($event)"
         />
-        <label for="freeDrawing">Enable Free Drawing</label>
+        <label class="ml-2" for="freeDrawing">Enable Free Drawing</label>
       </div>
       <!-- Active drawing mode -->
 
-      <input
-        type="color"
-        id="drawingColor"
-        value="#000000"
-        (change)="changeDrawingColor($event)"
-      />
-      <label for="drawingColor">Drawing Color</label>
+      <div class="mb-2">
+        <input
+          type="color"
+          id="drawingColor"
+          value="#000000"
+          (change)="changeDrawingColor($event)"
+        />
+        <label for="drawingColor" class="ml-2">Drawing Color</label>
+      </div>
       <!-- Add drawing Color -->
 
       <input
@@ -114,7 +101,7 @@
         value="1"
         (change)="changeBrushSize($event)"
       />
-      <label for="brushSize">Brush Size</label>
+      <label for="brushSize" class="ml-2">Brush Size</label>
       <!-- Add brush size -->
     </div>
 

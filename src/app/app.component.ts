@@ -25,6 +25,7 @@ import { ActionsModalComponent } from './components/actions-modal/actions-modal.
 })
 export class AppComponent {
   @ViewChild('canvasWrapper') canvasWrapper!: ElementRef;
+  @ViewChild('svgFile') fileInput!: ElementRef;
 
   canvas!: fabric.Canvas;
 
@@ -374,6 +375,10 @@ export class AppComponent {
     }
   }
 
+  openFileInput() {
+    this.fileInput.nativeElement.click();
+  }
+
   onMenuItemSelected(action: string) {
     if (action === 'addLabel') {
       this.addLabel(this.mouseX, this.mouseY);
@@ -383,12 +388,14 @@ export class AppComponent {
       this.editLabel(this.selectedLabel);
     } else if (action === 'deleteLabel') {
       this.deleteLabel();
+    } else if (action === 'addSVG') {
+      this.openFileInput();
     }
 
     this.isMenuVisible = false;
   }
 
-  deleteLabel() {  
+  deleteLabel() {
     this.removeSelected();
     this.selectedLabel = null;
   }
@@ -441,5 +448,30 @@ export class AppComponent {
   onCancel() {
     this.isModalVisible = false;
     this.selectedLabel = null;
+  }
+
+  rasterizeSVG() {
+    const w = window.open('');
+    w?.document.write(this.canvas.toSVG());
+    this.downLoadSVG();
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(this.canvas.toSVG());
+  }
+
+  downLoadSVG() {
+    const c =
+      'data:image/svg+xml;utf8,' + encodeURIComponent(this.canvas.toSVG());
+    const downloadLink = document.createElement('a');
+    document.body.appendChild(downloadLink);
+    downloadLink.href = c;
+    downloadLink.target = '_self';
+    downloadLink.download = Date.now() + '.svg';
+    downloadLink.click();
+  }
+
+  saveCanvasToJSON() {
+    const json = JSON.stringify(this.canvas);
+    localStorage.setItem('Kanvas', json);
+    console.log('json');
+    console.log(json);
   }
 }
