@@ -43,6 +43,9 @@
           (change)="handleFileInput($event)"
           class="mt-2"
         />
+        <hr />
+        <!-- <app-actions-modal [isVisible]="isActionModalVisible"></app-actions-modal> -->
+        <app-actions-modal [isVisible]="true"></app-actions-modal>
       </div>
     </div>
 
@@ -72,6 +75,18 @@
         (ngModelChange)="resizeCanvas()"
         class="mb-2 mt-1 outline-none p-2 shadow-md rounded-md w-full border border-gray-100"
       />
+
+      <div class="checkbox">
+        <input
+          type="checkbox"
+          id="previewMode"
+          name="previewMode"
+          (change)="togglePreviewMode()"
+          value="Preview"
+        />
+        <label for="previewMode"> Preview Mode</label>
+      </div>
+      <!-- Preview Mode -->
 
       <div class="text-center">
         <!-- ... -->

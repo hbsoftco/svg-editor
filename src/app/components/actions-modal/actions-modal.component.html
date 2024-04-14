@@ -1,0 +1,79 @@
+<div
+  class="fixed inset-0 flex items-top max-h-[50rem] mt-20 justify-center z-50"
+  *ngIf="isVisible"
+>
+  <div
+    class="bg-white rounded-lg p-4 m-4 min-w-[50rem] max-w-xl max-h-full text-center shadow-xl border border-gray-200"
+  >
+    <div class="flex justify-center items-center gap-3 mb-2">
+      <button
+        (click)="tab = 'animation'"
+        [ngClass]="{
+          'bg-gray-200 text-white': tab !== 'animation',
+          'bg-blue-700 text-white': tab === 'animation'
+        }"
+        class="px-3 py-2 rounded hover:bg-blue-500 text-white"
+      >
+        Animation
+      </button>
+      <button
+        (click)="tab = 'chartConfig'"
+        [ngClass]="{
+          'bg-gray-200 text-white': tab !== 'chartConfig',
+          'bg-blue-700 text-white': tab === 'chartConfig'
+        }"
+        class="px-3 py-2 rounded hover:bg-blue-500 text-white"
+      >
+        Chart
+      </button>
+    </div>
+    <hr />
+    <div class="text-left">
+      <div *ngIf="tab === 'chartConfig'" class="p-2">
+        <h2 class="font-bold text-darkText text-2xl">Chart Configs</h2>
+        <div class="grid grid-cols-12">
+          <div class="md:col-span-6 col-span-12 p-2">
+            <label class="text-darkText">Category:</label>
+            <input
+              [(ngModel)]="category"
+              class="p-2 ml-2 outline-none border border-gray-200 rounded"
+              placeholder="Enter category"
+            />
+          </div>
+          <div class="md:col-span-6 col-span-12 p-2">
+            <label class="text-darkText">Value:</label>
+            <input
+              [(ngModel)]="value"
+              type="number"
+              class="p-2 ml-2 outline-none border border-gray-200 rounded"
+              placeholder="Enter value"
+            />
+          </div>
+          <div class="md:col-span-6 col-span-12 p-2">
+            <label class="text-darkText">Color:</label>
+            <input class="ml-2" [(ngModel)]="color" type="color" />
+          </div>
+          <div class="md:col-span-12 col-span-12 p-2 mb-8">
+            <hr />
+            <button
+              class="px-3 mt-2 mr-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400"
+              (click)="addData()"
+            >
+              Add Data
+            </button>
+            <button
+              class="px-3 mt-2 py-2 bg-green-500 text-white rounded hover:bg-green-400"
+              (click)="createChart()"
+            >
+              Generate Chart
+            </button>
+          </div>
+        </div>
+
+        <div id="chartdiv" style="width: 100%; height: 400px"></div>
+        <!-- Add a "Save" button -->
+      </div>
+      <div *ngIf="tab === 'animation'">Animation</div>
+    </div>
+  </div>
+</div>

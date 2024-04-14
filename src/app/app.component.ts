@@ -1,10 +1,19 @@
-import { CommonModule, NgFor } from '@angular/common';
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { CommonModule, NgFor, isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  NgZone,
+  PLATFORM_ID,
+  ViewChild,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { fabric } from 'fabric';
 import { RightClickMenuComponent } from './components/right-click-menu/right-click-menu.component';
 import { LabelModalComponent } from './components/label-modal/label-modal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActionsModalComponent } from './components/actions-modal/actions-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +24,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     RouterOutlet,
     NgFor,
     RightClickMenuComponent,
+    ActionsModalComponent,
     CommonModule,
     LabelModalComponent,
   ],
@@ -23,6 +33,60 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 })
 export class AppComponent {
   @ViewChild('canvasWrapper') canvasWrapper!: ElementRef;
+  // private root!: am5.Root;
+
+  // constructor(
+  //   @Inject(PLATFORM_ID) private platformId: Object,
+  //   private zone: NgZone
+  // ) {}
+
+  // browserOnly(f: () => void) {
+  //   if (isPlatformBrowser(this.platformId)) {
+  //     this.zone.runOutsideAngular(() => {
+  //       f();
+  //     });
+  //   }
+  // }
+
+  // hb() {
+  //   this.browserOnly(() => {
+  //     let root = am5.Root.new('chartdiv');
+  //     root.setThemes([am5themes_Animated.new(root)]);
+  //     let chart = root.container.children.push(
+  //       am5xy.XYChart.new(root, { panY: false, layout: root.verticalLayout })
+  //     );
+
+  //     let data = [
+  //       { category: 'Research', value1: 1000 },
+  //       { category: 'Marketing', value1: 1200 },
+  //       { category: 'Sales', value1: 850 },
+  //     ];
+
+  //     let yAxis = chart.yAxes.push(
+  //       am5xy.ValueAxis.new(root, {
+  //         renderer: am5xy.AxisRendererY.new(root, {}),
+  //       })
+  //     );
+  //     let xAxis = chart.xAxes.push(
+  //       am5xy.CategoryAxis.new(root, {
+  //         renderer: am5xy.AxisRendererX.new(root, {}),
+  //         categoryField: 'category',
+  //       })
+  //     );
+  //     xAxis.data.setAll(data);
+
+  //     let series1 = chart.series.push(
+  //       am5xy.ColumnSeries.new(root, {
+  //         name: 'Series',
+  //         xAxis: xAxis,
+  //         yAxis: yAxis,
+  //         valueYField: 'value1',
+  //         categoryXField: 'category',
+  //       })
+  //     );
+  //     series1.data.setAll(data);
+  //   });
+  // }
 
   canvas!: fabric.Canvas;
 
@@ -35,6 +99,7 @@ export class AppComponent {
   selectedLabel: fabric.Object | null = null;
 
   isModalVisible = false;
+  isActionModalVisible = false;
 
   canvasWidth = 800;
   canvasHeight = 600;
@@ -62,6 +127,7 @@ export class AppComponent {
   ngAfterViewInit() {
     this.canvasWidth = this.canvasWrapper.nativeElement.offsetWidth;
     this.resizeCanvas();
+    // this.hb();
   }
 
   ngOnInit() {
@@ -70,7 +136,32 @@ export class AppComponent {
     this.resizeCanvas();
     this.handleCustomMenu();
     this.zoomCanvas();
-    this.enableDragAndDrop();
+    // this.enableDragAndDrop();
+
+    this.canvas.on('object:selected', (e) => {
+      console.log(e.e);
+      let selectedObject = e.target;
+      console.log(selectedObject);
+
+      // Check if the selected object is an instance of fabric.Path (or fabric.Polygon, etc.)
+      if (selectedObject instanceof fabric.Path) {
+        // Add style to the selected object
+        selectedObject.set({ fill: 'red' });
+        this.canvas.renderAll();
+      }
+    });
+  }
+
+  togglePreviewMode() {
+    if ((document.getElementById('previewMode') as HTMLInputElement)?.checked) {
+      this.canvas.interactive = false;
+      this.canvas.isDrawingMode = false;
+      this.canvas;
+      console.log();
+    } else {
+      this.canvas.interactive = true;
+    }
+    this.canvas.renderAll();
   }
 
   resizeCanvas() {
@@ -265,8 +356,8 @@ export class AppComponent {
 
     if (labelText && this.canvas) {
       let text = new fabric.Text(labelText, {
-        left: x,
-        top: y,
+        left: 0,
+        top: 0,
         backgroundColor: '#b6b6b6',
         padding: 4,
         cornerStyle: 'circle',
@@ -366,6 +457,8 @@ export class AppComponent {
 
       this.isModalVisible = false;
     }
+
+    this.selectedLabel = null;
   }
 
   onDelete() {
@@ -374,9 +467,11 @@ export class AppComponent {
       this.selectedLabel = null;
     }
     this.isModalVisible = false;
+    this.selectedLabel = null;
   }
 
   onCancel() {
     this.isModalVisible = false;
+    this.selectedLabel = null;
   }
 }
