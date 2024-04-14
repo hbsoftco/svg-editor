@@ -1,27 +1,21 @@
-# SvgEditor
+# SVG Editor
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.4.
+This project is an SVG Editor developed with Angular, utilizing the Fabric.js package for applying modifications and adding layers. It offers the following features:
 
-## Development server
+- Background addition for the canvas
+- Adding SVG to the canvas
+- Adding images
+- Adding labels
+- Label deletion and editing via right-click on the canvas
+- Bulk deletion of elements
+- Drawing mode on the canvas with customizable attributes such as color and brush size
+- Disabling the default right-click menu and implementing a custom right-click menu
+- Double-click feature on labels, opening a chart design dialog
+- Responsive canvas board that adjusts its initial size with page resizing
+- SVG download button
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+The project is also deployed as a serverless application on Cloudflare Workers, which you can view online via the following link:
 
-## Code scaffolding
+[svg-editor.hosseinbajan.ir](https://svg-editor.hosseinbajan.ir/)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Feel free to explore and contribute to this project!
