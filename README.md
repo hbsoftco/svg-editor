@@ -18,7 +18,6 @@ The project is also deployed as a serverless application on Cloudflare Workers, 
 
 [svg-editor.hosseinbajan.ir](https://svg-editor.hosseinbajan.ir/)
 
-![Alt text](https://i.ibb.co/0tLqwc9/Screenshot-from-2024-04-14-19-20-42.png)
-
+![Alt text](https://i.ibb.co/bJV1fPv/Screenshot-from-2024-04-14-19-20-42.png)
 
 Feel free to explore and contribute to this project!
