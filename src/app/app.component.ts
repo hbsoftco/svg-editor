@@ -6,6 +6,7 @@ import { RightClickMenuComponent } from './components/right-click-menu/right-cli
 import { LabelModalComponent } from './components/label-modal/label-modal.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActionsModalComponent } from './components/actions-modal/actions-modal.component';
+// import * as d3 from 'd3';
 
 @Component({
   selector: 'app-root',
@@ -329,6 +330,46 @@ export class AppComponent {
     }
   }
 
+  onLabelClick(text: any) {
+    try {
+      this.canvas.forEachObject((obj: any) => {
+        console.log(obj.type);
+
+        if (obj.type === 'group' || obj.type === 'path') {
+          // For each object in the group or for the path object...
+          let objects = obj.type === 'group' ? obj.getObjects() : [obj];
+          objects.forEach((groupObj: any) => {
+            // Check if the object is not a 'text'
+            if (groupObj.type !== 'text') {
+              // Check if fill exists and is a string
+              let originalFill = groupObj.get('fill');
+
+              if (typeof originalFill === 'string') {
+                // Change fill color to red
+                groupObj.animate('fill', 'red', {
+                  onChange: this.canvas.renderAll.bind(this.canvas),
+                  duration: 500,
+                  onComplete: () => {
+                    // Wait for the first animation to complete before starting the second
+                    setTimeout(() => {
+                      // Change fill color back to original
+                      groupObj.animate('fill', originalFill, {
+                        onChange: this.canvas.renderAll.bind(this.canvas),
+                        duration: 500,
+                      });
+                    }, 500); // Wait for the same duration as the first animation
+                  },
+                });
+              }
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async addLabel(x: number, y: number) {
     try {
       // Prompt the user for the label text and background color
@@ -339,37 +380,38 @@ export class AppComponent {
           left: 0,
           top: 0,
           backgroundColor: '#b6b6b6',
-          padding: 4,
-          cornerStyle: 'circle',
+          transparentCorners: true,
         });
 
-        text.set({ stroke: 'gray' });
+        // text.set({ stroke: 'gray' });
 
         text.on('mousedblclick', () => this.onLabelDoubleClick(text));
 
+        text.on('mousedown', () => this.onLabelClick(text));
+
         // Add animation to the label
-        text.animate('left', '+=100', {
-          onChange: this.canvas.renderAll.bind(this.canvas),
-          duration: 1000,
-          easing: fabric.util.ease.easeOutBounce,
-        });
+        // text.animate('left', '+=100', {
+        //   onChange: this.canvas.renderAll.bind(this.canvas),
+        //   duration: 1000,
+        //   easing: fabric.util.ease.easeOutBounce,
+        // });
 
         // Change color on mouse hover
-        text.on('mouseover', () => {
-          text.set({ fill: 'red', backgroundColor: 'blue', fontWeight: 800 }); // Change color to red
-          this.canvas.renderAll();
-        });
+        // text.on('mouseover', () => {
+        //   text.set({ fill: 'red', backgroundColor: 'blue', fontWeight: 800 }); // Change color to red
+        //   this.canvas.renderAll();
+        // });
 
-        text.data = { dataId: 'hbsoft' };
+        // text.data = { dataId: 'hbsoft' };
 
-        text.on('mouseout', () => {
-          text.set({
-            fill: 'black',
-            backgroundColor: 'gray',
-            fontWeight: 600,
-          }); // Change color back to black
-          this.canvas.renderAll();
-        });
+        // text.on('mouseout', () => {
+        //   text.set({
+        //     fill: 'black',
+        //     backgroundColor: 'gray',
+        //     fontWeight: 600,
+        //   }); // Change color back to black
+        //   this.canvas.renderAll();
+        // });
 
         this.canvas.add(text);
       }
