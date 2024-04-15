@@ -51,7 +51,6 @@ export class AppComponent {
 
   backgrounds = [
     '/assets/svg/bg/11.svg',
-    // '/assets/svg/bg/12.svg',
     '/assets/svg/bg/13.svg',
     '/assets/svg/bg/14.svg',
     '/assets/svg/bg/15.svg',
@@ -301,23 +300,81 @@ export class AppComponent {
     this.selectedLabel = label;
   }
 
-  async addLabel(x: number, y: number) {
-    // Prompt the user for the label text and background color
-    let labelText = prompt('Enter the label text:');
+  findLabel() {
+    if (this.canvas) {
+      // Iterate over all objects in the canvas
+      this.canvas.forEachObject((obj) => {
+        // Check if the object has the custom attribute 'dataId' and if it matches the desired value
+        if (obj['data'] && obj['data'].dataId === 'hbsoft') {
+          // Add animation to the found object
+          obj.animate('top', '+=100', {
+            onChange: this.canvas.renderAll.bind(this.canvas),
+            duration: 1000,
+            easing: fabric.util.ease.easeOutBounce,
+          });
 
-    if (labelText && this.canvas) {
-      let text = new fabric.Text(labelText, {
-        left: 0,
-        top: 0,
-        backgroundColor: '#b6b6b6',
-        padding: 4,
-        cornerStyle: 'circle',
+          // Change background color and then change it back after 0.5s
+          obj.animate('backgroundColor', 'red', {
+            onChange: this.canvas.renderAll.bind(this.canvas),
+            duration: 500, // Transition duration
+            onComplete: () => {
+              obj.animate('backgroundColor', 'gray', {
+                onChange: this.canvas.renderAll.bind(this.canvas),
+                duration: 500, // Transition duration
+              });
+            },
+          });
+        }
       });
-      // Add a unique ID to the label
-      // text.set({ id: 'label-' + Date.now() });
+    }
+  }
 
-      text.on('mousedblclick', () => this.onLabelDoubleClick(text));
-      this.canvas.add(text);
+  async addLabel(x: number, y: number) {
+    try {
+      // Prompt the user for the label text and background color
+      let labelText = prompt('Enter the label text:');
+
+      if (labelText && this.canvas) {
+        let text = new fabric.Text(labelText, {
+          left: 0,
+          top: 0,
+          backgroundColor: '#b6b6b6',
+          padding: 4,
+          cornerStyle: 'circle',
+        });
+
+        text.set({ stroke: 'gray' });
+
+        text.on('mousedblclick', () => this.onLabelDoubleClick(text));
+
+        // Add animation to the label
+        text.animate('left', '+=100', {
+          onChange: this.canvas.renderAll.bind(this.canvas),
+          duration: 1000,
+          easing: fabric.util.ease.easeOutBounce,
+        });
+
+        // Change color on mouse hover
+        text.on('mouseover', () => {
+          text.set({ fill: 'red', backgroundColor: 'blue', fontWeight: 800 }); // Change color to red
+          this.canvas.renderAll();
+        });
+
+        text.data = { dataId: 'hbsoft' };
+
+        text.on('mouseout', () => {
+          text.set({
+            fill: 'black',
+            backgroundColor: 'gray',
+            fontWeight: 600,
+          }); // Change color back to black
+          this.canvas.renderAll();
+        });
+
+        this.canvas.add(text);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
