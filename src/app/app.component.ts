@@ -30,6 +30,8 @@ export class AppComponent {
 
   canvas!: fabric.Canvas;
 
+  svgDataId: boolean = false;
+
   activeObject: any;
   originalPos: { left: number; top: number } | null = null;
 
@@ -196,25 +198,6 @@ export class AppComponent {
     });
   }
 
-  handleFileInput(event: Event) {
-    let target = event.target as HTMLInputElement;
-    let files = target.files;
-    if (files && files.length > 0) {
-      let file = files.item(0);
-      if (file) {
-        let fileReader = new FileReader();
-        fileReader.onload = (e) => {
-          if (typeof fileReader.result === 'string') {
-            this.loadSVG(fileReader.result);
-          }
-        };
-        fileReader.readAsText(file);
-      } else {
-        console.log('No file selected');
-      }
-    }
-  }
-
   loadSVG(svgString?: string) {
     if (svgString) {
       fabric.loadSVGFromString(svgString, (objects, options) => {
@@ -339,8 +322,8 @@ export class AppComponent {
           // For each object in the group or for the path object...
           let objects = obj.type === 'group' ? obj.getObjects() : [obj];
           objects.forEach((groupObj: any) => {
-            // Check if the object is not a 'text'
-            if (groupObj.type !== 'text') {
+            // Check if the object is not a 'text' and has the special id
+            if (groupObj.type !== 'text' && groupObj.id === 'mySpecialObject') {
               // Check if fill exists and is a string
               let originalFill = groupObj.get('fill');
 
@@ -370,7 +353,7 @@ export class AppComponent {
     }
   }
 
-  async addLabel(x: number, y: number) {
+  async addLabel(x: number, y: number, type: boolean) {
     try {
       // Prompt the user for the label text and background color
       let labelText = prompt('Enter the label text:');
@@ -383,35 +366,13 @@ export class AppComponent {
           transparentCorners: true,
         });
 
-        // text.set({ stroke: 'gray' });
-
         text.on('mousedblclick', () => this.onLabelDoubleClick(text));
 
         text.on('mousedown', () => this.onLabelClick(text));
 
-        // Add animation to the label
-        // text.animate('left', '+=100', {
-        //   onChange: this.canvas.renderAll.bind(this.canvas),
-        //   duration: 1000,
-        //   easing: fabric.util.ease.easeOutBounce,
-        // });
-
-        // Change color on mouse hover
-        // text.on('mouseover', () => {
-        //   text.set({ fill: 'red', backgroundColor: 'blue', fontWeight: 800 }); // Change color to red
-        //   this.canvas.renderAll();
-        // });
-
-        // text.data = { dataId: 'hbsoft' };
-
-        // text.on('mouseout', () => {
-        //   text.set({
-        //     fill: 'black',
-        //     backgroundColor: 'gray',
-        //     fontWeight: 600,
-        //   }); // Change color back to black
-        //   this.canvas.renderAll();
-        // });
+        if (type) {
+          text.data = { dataId: 'hbsoft' };
+        }
 
         this.canvas.add(text);
       }
@@ -478,9 +439,63 @@ export class AppComponent {
     this.fileInput.nativeElement.click();
   }
 
+  handleFileInput(event: Event) {
+    if (this.svgDataId) {
+      let target = event.target as HTMLInputElement;
+      let files = target.files;
+      if (files && files.length > 0) {
+        let file = files.item(0);
+        if (file) {
+          let fileReader = new FileReader();
+          fileReader.onload = (e) => {
+            if (typeof fileReader.result === 'string') {
+              // Parse the SVG string into a DOM structure
+              let parser = new DOMParser();
+              let svgDoc = parser.parseFromString(
+                fileReader.result,
+                'image/svg+xml'
+              );
+
+              // Add a custom attribute to the root SVG element
+              svgDoc.documentElement.setAttribute('id', 'mySpecialObject');
+
+              // Serialize the SVG DOM structure back into a string
+              let serializer = new XMLSerializer();
+              let svgString = serializer.serializeToString(
+                svgDoc.documentElement
+              );
+
+              this.loadSVG(svgString);
+            }
+          };
+          fileReader.readAsText(file);
+        } else {
+          console.log('No file selected');
+        }
+      }
+    } else {
+      let target = event.target as HTMLInputElement;
+      let files = target.files;
+      if (files && files.length > 0) {
+        let file = files.item(0);
+        if (file) {
+          let fileReader = new FileReader();
+          fileReader.onload = (e) => {
+            if (typeof fileReader.result === 'string') {
+              this.loadSVG(fileReader.result);
+            }
+          };
+          fileReader.readAsText(file);
+        } else {
+          console.log('No file selected');
+        }
+      }
+    }
+  }
+
   onMenuItemSelected(action: string) {
     if (action === 'addLabel') {
-      this.addLabel(this.mouseX, this.mouseY);
+      this.addLabel(this.mouseX, this.mouseY, false);
     } else if (action === 'addImage') {
       this.addImage(this.mouseX, this.mouseY);
     } else if (action === 'editLabel' && this.selectedLabel) {
@@ -488,6 +503,10 @@ export class AppComponent {
     } else if (action === 'deleteLabel') {
       this.deleteLabel();
     } else if (action === 'addSVG') {
+      this.svgDataId = false;
+      this.openFileInput();
+    } else if (action === 'addSVGData') {
+      this.svgDataId = true;
       this.openFileInput();
     }
 
